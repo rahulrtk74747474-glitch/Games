@@ -1,32 +1,61 @@
-# SKY STACK
+# TRAP THE THIEF
 
-The new default game is **index.html**: a single-file, offline, one-tap arcade game. Download the file and open it in a browser. No packages, server, images or network requests are needed to play.
+The default game is **index.html** — a complete mobile-first thinking game in one self-contained HTML file. Download and open it in a modern browser. No build, server, libraries, external fonts, assets or network connection are needed to play.
 
-## How to play
+## Play in ten seconds
 
-Tap **Let's build**, then tap the play area (or press Space) when the moving block lines up with the tower. Overhang falls away and the next block becomes narrower. Miss the tower and the run ends. Tap **One more tower** to retry immediately.
+1. Tap an empty tile to place a barrier.
+2. The thief recomputes his shortest escape route and moves one step.
+3. Cut off **all** routes to the green exits to win. If any thief reaches an exit, you lose.
 
-- Each successful placement adds one floor.
-- A drop within 6 world pixels for the first five floors, then 4 pixels, snaps perfectly.
-- Three consecutive perfect drops restore 18 pixels of width, up to the starting width.
-- Speed increases with height, up to a cap. There is no timer; let a block pass and try again.
-- Skyline, moon, stars, beveled blocks, falling pieces and particles are drawn procedurally.
-- Personal best and sound preference save in localStorage when available.
-- Sound is off by default; tap the musical note to enable synthesized effects.
-- Pause with the pause button or P; switching away from the tab auto-pauses.
-- Score sharing uses native sharing or clipboard, with a visible text fallback.
+The gold dot marks his intended next step **before** your action; the dotted line shows his current route. Your barrier can change both. Permanent walls, occupied tiles, exits, gates and tunnels cannot receive barriers. Undo is unlimited and does not reduce stars. Retry starts the same puzzle again.
 
-Touch, mouse and keyboard work. Reduced-motion preference disables decorative particles, flash and shake. The moving block remains animated because timing is the core mechanic. Offline play uses the downloaded file; this is not an installable PWA.
+## 24 campaign cases
 
-The earlier ECHO strategy game is preserved as **echo.html**.
+- Cases 1–7: barriers and alternate escape routes.
+- Cases 8–12: paired tunnels; moving between endpoints takes one thief step.
+- Cases 13–18: tap a power switch instead of placing a barrier to toggle gates. This uses one turn. A gate cannot close under a thief; an occupied switch cannot be activated.
+- Cases 19–24: two thieves move simultaneously. Catch both; either escaping loses the case. Thieves can share a tile. A temporarily cut-off thief can move again if you reopen a route, so plan to contain both together.
+
+Routes are deterministic breadth-first searches. Equal routes use up, right, down, left, then tunnel ordering. No timer, hidden dice rolls or adaptive enemy cheating.
+
+Match or beat the displayed move target without hints for three stars. Within target +2 earns two; otherwise one. Using a hint caps the attempt at two stars. The target is a verified solution length, **not a claim of the mathematical minimum**. Previously earned best stars are retained.
+
+Hints first use the verified solution where applicable, then a bounded search from your current position. If that search fails, the game says it did not find a short solution; it does not claim the puzzle is impossible.
+
+## Daily challenge and saving
+
+The UTC date deterministically selects from 132 individually verified board variants. Everyone using the same date gets the same puzzle. The finite pool can repeat. There is no server or global leaderboard.
+
+LocalStorage saves unlocked cases, stars, best move counts, sound preference and your unfinished action sequence. Reloading replays the sequence to rebuild the board and undo history. Opening another case replaces the current unfinished attempt. Private browsing or storage restrictions can prevent persistence; failed writes show an on-screen notice.
+
+Sound is optional and synthesized with WebAudio. Haptics run where supported. Reduced-motion preferences are respected. Downloaded HTML works offline; this is not an installable PWA or Android APK.
 
 ## Validation
 
 ```sh
-node tests/sky-stack.test.cjs
-node tests/sky-runtime.test.cjs
+node tests/trap-rules.test.cjs
+npm install --no-save playwright
+npx playwright install chromium
+node tests/trap-browser.test.cjs
 ```
 
-Both passed: overlap/cut invariants, perfect tolerance, misses, syntax, 12-floor sequence, combo progression, pause gating, retry and record persistence. Runtime tests use browser-interface stubs; they do not verify actual device rendering, haptic feedback or audio. Real-browser visual verification remains outstanding.
+`CHROMIUM_EXECUTABLE` can point to an existing Chromium binary. `SCREENSHOT_DIR` sets the screenshot destination (defaults to the OS temporary directory).
 
-ECHO's older tests now target echo.html. They are separate from SKY STACK.
+Passed in this build:
+
+- All 24 campaign winning certificates and 132 daily certificates.
+- Deterministic route tie order, tunnel travel, gate toggling, occupied-gate safety, invalid actions and immutable rule state.
+- All 24 cases played through the actual Chromium UI, all 72 stars, touch placement, daily win, hint, loss/undo recovery, save/reload and undo history.
+- Mobile (360 and 390 px), tablet, landscape and desktop viewport checks. Phone and desktop screenshots were visually inspected.
+- No JavaScript page errors and no external network requests during gameplay.
+
+Physical-device vibration and speaker output were not tested.
+
+## Previous games
+
+The previous games remain available as `echo.html` and `sky-stack.html`; their tests target those files. The new game does not overwrite their saved progress keys.
+
+## Code structure
+
+All production code is in index.html: styling and semantic UI, pure Rules engine, verified puzzle data, persistence, rendering, turn control, hints and optional feedback. The regression tests are development tools, not runtime dependencies.
