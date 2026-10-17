@@ -1,6 +1,6 @@
 // No-dependency rules checks. Run with: node tests/sky-stack.test.cjs
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
-const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');const js=html.split('<script>')[1].split('</script>')[0];new Function(js);
+const html=fs.readFileSync(path.join(__dirname,'../sky-stack.html'),'utf8');const js=html.split('<script>')[1].split('</script>')[0];new Function(js);
 const c={};vm.createContext(c);vm.runInContext(js.slice(0,js.indexOf('// STATE & STORAGE'))+'\nthis.R=Rules;',c);const R=c.R;
 assert.equal(R.land(100,100,100,100).perfect,true);
 assert.equal(R.land(104,100,100,100).width,100);
