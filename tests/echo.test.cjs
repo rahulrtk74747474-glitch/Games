@@ -29,7 +29,7 @@ const path=require('node:path');
  assert.deepEqual(await page.evaluate(()=>EchoTest.getState().echo),state.moves.map(m=>({p:Math.floor(m.p/5)*5+4-m.p%5,t:m.t})));
  await page.locator('.cell:not([disabled])').first().click();const resumed=await page.evaluate(()=>EchoTest.getState());await page.reload();assert.deepEqual(await page.evaluate(()=>EchoTest.getState()),resumed);
  for(const [width,height] of [[360,800],[768,1024],[844,390]]){await page.setViewportSize({width,height});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'horizontal overflow');}
- await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/workspace/scratch/ee4b5b8887a4/echo-mobile.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(require('node:os').tmpdir(),'echo-mobile.png'),fullPage:true});
  await page.locator('#import').click();await page.locator('#codeInput').fill('bad');await page.locator('#loadCode').click();assert((await page.locator('#codeError').textContent()).length>0);
  assert.deepEqual(errors,[]);await browser.close();console.log('8-turn round, rewards, persistence, next Echo, mobile/tablet/landscape, invalid import and browser errors passed');
 })().catch(e=>{console.error(e);process.exit(1)});
