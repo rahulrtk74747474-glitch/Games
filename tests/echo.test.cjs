@@ -6,7 +6,7 @@ const path=require('node:path');
  const browser=await chromium.launch({headless:true});
  const page=await browser.newPage({viewport:{width:390,height:844}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('file://'+path.resolve(__dirname,'../index.html'));
+ await page.goto('file://'+path.resolve(__dirname,'../echo.html'));
  const result=await page.evaluate(()=>{
   const {Rules:R,mirror,reflected,dailyPlan,encode,decode}=EchoTest;
   const check=(ok,msg)=>{if(!ok)throw Error(msg)};
