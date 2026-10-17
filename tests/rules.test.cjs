@@ -1,5 +1,5 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
-const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+const html=fs.readFileSync(path.join(__dirname,'../echo.html'),'utf8');
 const js=html.split('<script>')[1].split('</script>')[0];
 new Function(js);
 const context={localStorage:{getItem:()=>null},console};vm.createContext(context);
