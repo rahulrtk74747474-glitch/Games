@@ -35,6 +35,7 @@ The single file contains numbered sections: 1. pure rules engine, 2. rendering, 
 The delivered game has zero dependencies. Optional browser regression tests use Node and Playwright:
 
 ```sh
+node tests/rules.test.cjs
 npm install --no-save playwright
 npx playwright install chromium
 node tests/echo.test.cjs
@@ -51,3 +52,5 @@ Coverage: orthogonal capture, Wall immunity, occupied replay blocking, Seed timi
 5. Evaluate Apex champions by wins against several fixed test plans instead of raw cell count.
 
 These are experiments, not current rules. Measure win rate, unit selection, abandoned rounds and replay frequency before changing them.
+
+Validation in the build environment: pure rule checks and 1,000 simulated rounds passed. A temporary DOM harness also passed full-round play, results, reward persistence, next-round replay, friend import and reload. The real-browser suite is provided but could not run because the Chromium download was unavailable; device rendering, audio and haptics still need hands-on verification.
